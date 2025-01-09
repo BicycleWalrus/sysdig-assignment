@@ -12,13 +12,13 @@ echo "Lab pre-requisites..."
 if kubectl apply -f app.yaml; then
     echo "Successfully applied pre-requisites..."
 else
-    echo "Error: Failed to apply ~/sysdig-assignment/app.yaml"
+    echo "Error: Failed to apply /root/sysdig-assignment/app.yaml"
     exit 1
 fi
 
 # Applying the Vulnerable Workload: Pillow
 echo "Applying the vulnerable workload: pillow"
-if kubectl apply -f ~/sysdig-assignment/pillow.yaml; then
+if kubectl apply -f /root/sysdig-assignment/pillow.yaml; then
     echo "Successfully applied the vulnerable workload: pillow"
 else
     echo "Error: Failed to apply pillow.yaml"
