@@ -20,15 +20,23 @@ By the end of this lab, you will understand how to deploy vulnerable workloads a
 
     `root@aserver:~#` `git clone https://github.com/BicycleWalrus/sysdig-assignment.git`
 
+0. Change directory to access the setup script for this assignment.
+
+    `root@aserver:~#` `cd sysdig-assignment/`
+
 0. Make the Setup Script Executable.
 
-    `root@aserver:~#` `chmod +x ~/sysdig-assignment/setup-script.sh`
+    `root@aserver:~/sysdig-assignment#` `chmod +x setup-script.sh`
 
 0. Run the Setup Script to deploy the **pillow** Pod.
 
-    `root@aserver:~#` `./sysdig-assignment/setup-script.sh`
+    `root@aserver:~/sysdig-assignment#` `./setup-script.sh`
 
     > The script will create the necessary Kubernetes resources and deploy the vulnerable Pillow workload. The initialization requires approx 20 seconds.
+
+0. Return to the home directory.
+
+    `root@aserver:~/sysdig-assignment#` `cd`
 
 0. Verify the Deployment.
 
@@ -48,6 +56,10 @@ By the end of this lab, you will understand how to deploy vulnerable workloads a
     &#128432; `Click 'Sysdig Secure' tab from the left panel of your learning Environment` - The **Sysdig Secure** UI opens in a new tab.
 
     > The Sysdig Secure dashboard displays metric data for Runtime Detections, and Vulnerabilities. Take some time to familiarize yourself before continuuing.
+
+0. From the left sidebar, navigate to **Vulnerabilities > + Scan Now**
+
+    &#128432; `Select 'Vulnerabilities > + Scan Now' from the left sidebar menu.` - The Runtime page opens.
 
 0. From the left sidebar, navigate to **Vulnerabilities > Findings/Runtime**.
 
