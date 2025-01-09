@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pillow
+  namespace: default
+spec:
+  initContainers:
+  - name: install-dependencies
+    image: python:3.9
+    command:
+    - /bin/sh
+    - -c
+    - |
+      pip install flask
+      cp -r /usr/local/lib/python3.9/site-packages /site-packages
+    volumeMounts:
+    - name: python-packages
+      mountPath: /site-packages
+  containers:
+  - name: pillow
+    image: vulhub/ghostscript:9.23-with-flask
+    ports:
+    - containerPort: 8000
+    volumeMounts:
+    - name: pillow-py
+      mountPath: /root/app.py
+      subPath: app.py
+    - name: python-packages
+      mountPath: /python-packages
+    command:
+    - /bin/sh
+    - -c
+    - |
+      export PYTHONPATH=/python-packages
+      python /root/app.py 
+  volumes:
+  - name: pillow-py 
+    configMap:
+      name: pillow-py
+  - name: python-packages
+    emptyDir: {}
