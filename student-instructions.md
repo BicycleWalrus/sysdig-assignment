@@ -1,20 +1,50 @@
-# Deploying and Analyzing a Vulnerable Workload Using Sysdig
+# Detecting and Analyzing a Vulnerable Workload Using Sysdig Secure
 
 ## Objective
 
-In this lab, you will deploy a vulnerable application (**Pillow**) in a Kubernetes environment using an automated setup script. Once deployed, you will use Sysdig's vulnerability scanning capabilities to detect and analyze vulnerabilities within the **Pillow** pod. The lab will provide insights into identifying and mitigating security issues in containerized applications.
+In this lab, students will learn how to use Sysdig Secure to identify and analyze vulnerabilities in containerized workloads. By working through this hands-on exercise, participants will gain a deeper understanding of securing workloads by scanning container images, and detecting runtime vulnerabilities. The primary objectives include:
 
-### Topics Covered:
-- Deploying a vulnerable workload using `setup-script.sh`
-- Installing and configuring Sysdig-CLI for vulnerability analysis
-- Utilizing Sysdig-UI for vulnerability analysis
-- Detecting and analyzing vulnerabilities in the Pillow pod
+- Using Sysdig Secure to perform an image scan and identify vulnerabilities.
+- Detecting runtime vulnerabilities and analyzing their impact.
+- Understanding and applying remediation strategies for identified vulnerabilities.
 
-By the end of this lab, you will understand how to deploy vulnerable workloads and use Sysdig to identify security risks.
+This lab provides practical experience in using Sysdig Secure to strengthen containerized application security.
 
 ## Procedure
 
-### Part 1: Deploying the Vulnerable Workload
+### Part 1: Performing an Image Scan using Sysdig Secure
+
+1. Open the **Sysdig Secure** application.
+
+    &#128432; `Click 'Sysdig Secure' tab from the left panel of your learning Environment` - The **Sysdig Secure** UI opens in a new tab.
+
+0. Log in to Sysdig Secure using the provided credentials.
+
+    > The Sysdig Secure dashboard displays metric data for Runtime Detections, and Vulnerabilities. Take some time to familiarize yourself before continuuing.
+
+0. From the left sidebar, navigate to **Vulnerabilities > + Scan Now**
+
+    &#128432; `Select 'Vulnerabilities > + Scan Now' from the left sidebar menu.` - The Scan Image dialog form opens.
+
+0. The image we'll be using for our vulnerable workload later on in the lab is **vulhub/ghostscript:9.23-with-flask**. We'll need to scan this image in order for Sysdig to detect vulnerabilities at Runtime. Complete the **Scan Image** dialog form as follows.
+
+    `Please enter your image reference to scan it directly from the registry` `vulhub/ghostscript:9.23-with-flask`
+
+    &#128432; `Click the 'Scan Image' button.` - The Image Scan will initiate.
+
+    &#128432; `Click the 'See the Queue' button.` - The Registry > Scan the Queue page will open.
+
+0. You'll see that our image was scanned. Let's read the details of our image scan!
+
+    &#128432; `Click the 'index.docker.io/vulhub/ghostscript' list object.` - The **index.docker.io/vulhub/ghostscript** page will open.
+
+0. Here, we can learn all sorts of things about our image. **It is a Best Practice** to scan images prior to running them on a container, in any environment.
+
+    > Nothing to do here for now! We'll see this page later on. Let's move on scanning vulnerabilities at runtime!
+
+### Part 2: Deploying the Vulnerable Workload
+
+> Return to the Terminal Window to begin
 
 1. Clone the Repository Containing the Deployment Script.
 
@@ -47,21 +77,13 @@ By the end of this lab, you will understand how to deploy vulnerable workloads a
     kubectl get cm
     ```
 
-    > Ensure the **pillow** pod is running. If not, troubleshoot the script output for errors.
+    > It takes roughly 35 seconds for the Pod to initialize. Ensure the **pillow** pod is running before continuing.
 
-### Part 2: Utilize Sysdig Secure to analyze vulnerabilities and exploits for Pillow
+### Part 3: Detecting a Vulnerable Workload at Runtime
 
-1. Open the **Sysdig Secure** application.
+> Return to the Sysdig Secure window to begin.
 
-    &#128432; `Click 'Sysdig Secure' tab from the left panel of your learning Environment` - The **Sysdig Secure** UI opens in a new tab.
-
-    > The Sysdig Secure dashboard displays metric data for Runtime Detections, and Vulnerabilities. Take some time to familiarize yourself before continuuing.
-
-0. From the left sidebar, navigate to **Vulnerabilities > + Scan Now**
-
-    &#128432; `Select 'Vulnerabilities > + Scan Now' from the left sidebar menu.` - The Runtime page opens.
-
-0. From the left sidebar, navigate to **Vulnerabilities > Findings/Runtime**.
+1. From the left sidebar, navigate to **Vulnerabilities > Findings/Runtime**.
 
     &#128432; `Select 'Vulnerabilities > Findings/Runtime' from the left sidebar menu.` - The Runtime page opens.
 
@@ -87,11 +109,11 @@ By the end of this lab, you will understand how to deploy vulnerable workloads a
 
     &#128432; `Click the 'Vulnerabilities' Tab.` - An overview of Vulnerabilities and Policy findings appears.
 
-    > We still have quite a few results, but let's see if there are any *exploitable* vulnerabilities. An **Exploit** indicates that there are known tools that attackers could use to leverage the vulnerability. We need to squash these.
+    > We still have quite a few results, but let's see if there are any *exploitable* vulnerabilities. An **Exploit** indicates there are known tools attackers could use to leverage the vulnerability. We need to squash these.
 
 0. From the Right Panel, select the **Has Exploit** filter.
 
-    &#128432; `Select the 'Has Exploit' filter button from the right panel, under 'Severity By'` - All non-exploitable vulnerabilities are removed, and only **CVE-2023-4863** remains.
+    &#128432; `Select the 'Has Exploit' filter button from the right panel, beneath 'Severity By'` - All non-exploitable vulnerabilities are removed, and only **CVE-2023-4863** remains.
 
     > This is a **High** severity vulnerability with a known exploit. Luckily, you'll also notice the wrench is highlighted under the **CVE Context** tab. This means the exploit is fixable! But what is **CVE-2023-4863** anyways? Let's take a look at the [National Vulnerability Database](https://nvd.nist.gov/vuln/detail/CVE-2023-4863)! CVE-2023-4863 is a critical heap buffer overflow vulnerability in **libwebp**, a widely used library for encoding and decoding WebP images. This flaw allows remote attackers to execute arbitrary code by enticing users to open specially crafted WebP images, potentially leading to system compromise. 
 
@@ -99,14 +121,14 @@ By the end of this lab, you will understand how to deploy vulnerable workloads a
 
     &#128432; `Click the 'Recommendations' Tab.` - Detailed Recommendations open for your review.
 
-    > The first recommendation is already open for your review. There are currently **39** vulnerabilities, including **9** critical and **21** High vulnerabilities that can be fixed by installing a new version of the **Pillow** package. By upgrading to version **v6.2.2**, we can resolve many of these security vulnerabilities.
+    > The first recommendation is already open for your review. There are currently **39** vulnerabilities, including **9** critical and **21** High vulnerabilities that can be fixed by installing a new version of the **Pillow** package. By upgrading to version **v6.2.2**, we can resolve these security vulnerabilities.
 
 0. But what about our Exploit? Open the corresponding recommendation for **Fix Vulnerability CVE-2023-4863**.
 
     &#128432; `Click the 'Fix Vulnerability CVE-2023-4863' button.` - Detailed instructions to fix the vulnerability opens for your review.
 
-    > As we can see, we have a fix which involves an upgrade of **pillow** to version 10.0.1 to fix the exploitable vulnerability. As a general recommendation, you should ensure upgrades to relavent packages be updated periodically to account for these types of Vulnerabilities. 
+    > As we can see, we have a fix which involves an upgrade of **pillow** to version 10.0.1 to fix the exploitable vulnerability. As a general recommendation, you should ensure upgrades to relavent packages are performed periodically to account for these types of Vulnerabilities. 
 
 ## Conclusion
 
-In this lab, you deployed a vulnerable workload (Pillow) using a setup script and used Sysdig to analyze vulnerabilities within the workload. You learned how to identify risks and extract insights from container logs and reports, highlighting the importance of securing containerized environments. This lab demonstrates how automated tools like Sysdig can simplify the vulnerability management process and aid in mitigating potential risks.
+In this lab, you explored how to use Sysdig Secure for identifying and remediating vulnerabilities in containerized workloads. By scanning images before deployment, detecting runtime vulnerabilities, and applying recommended fixes, you gained hands-on experience with container security best practices. The lab demonstrated how to identify critical vulnerabilities, like CVE-2023-4863, and take actionable steps to resolve them, emphasizing the importance of proactive security measures in modern cloud-native environments.
