@@ -32,7 +32,9 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
 
     &#128432; `Click the 'Scan Image' button.` - The Image Scan will initiate.
 
-    &#128432; `Click the 'See the Queue' button.` - The Registry > Scan the Queue page will open.
+    &#128432; `Click the 'See the Queue' button.` - The Registry > Scan Now Queue page will open.
+
+    > You might notice several completed scans. Drilling into any scan in the next step will work.
 
 0. You'll see that our image was scanned. Let's read the details of our image scan!
 
@@ -40,11 +42,11 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
 
 0. Here, we can learn all sorts of things about our image. **It is a Best Practice** to scan images prior to running them on a container, in any environment.
 
-    > Nothing to do here for now! We'll see this page later on. Let's move on scanning vulnerabilities at runtime!
+    > Nothing to do here for now! We'll see this page later on. Let's move on to scanning vulnerabilities at runtime!
 
 ### Part 2: Deploying the Vulnerable Workload
 
-> Return to the Terminal Window to begin
+> Return to the Terminal Window to begin.
 
 1. Clone the Repository Containing the Deployment Script.
 
@@ -52,7 +54,7 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
 
 0. Change directory to access the setup script for this assignment.
 
-    `root@aserver:~#` `cd sysdig-assignment/`
+    `root@aserver:~#` `cd sysdig-assignment`
 
 0. Make the Setup Script Executable.
 
@@ -62,8 +64,7 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
 
     `root@aserver:~/sysdig-assignment#` `./setup-script.sh`
 
-    > The script will create the necessary Kubernetes resources and deploy the vulnerable Pillow workload. The initialization requires approx 20 seconds.
-
+    > The script will create the necessary Kubernetes resources and deploy the vulnerable Pillow workload.
 0. Return to the home directory.
 
     `root@aserver:~/sysdig-assignment#` `cd`
@@ -77,7 +78,7 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
     kubectl get cm
     ```
 
-    > It takes roughly 35 seconds for the Pod to initialize. Ensure the **pillow** pod is running before continuing.
+    > It takes roughly 40 seconds for the Pod to initialize. Ensure the **pillow** pod is running before continuing.
 
 ### Part 3: Detecting a Vulnerable Workload at Runtime
 
@@ -87,7 +88,10 @@ This lab provides practical experience in using Sysdig Secure to strengthen cont
 
     &#128432; `Select 'Vulnerabilities > Findings/Runtime' from the left sidebar menu.` - The Runtime page opens.
 
-    > There are an awful lot of failures being reported here, but finding our **pillow** pod/container is easy with the filter menu provided at the top of the page.
+    > There are an awful lot of vulnerabilities being reported here, but finding our **pillow** pod/container is easy with the filter menu provided at the top of the page. It was observed in testing the Runtime Scanning of workloads did not always perform appropriately. Attempt performing the following steps in an effort to remediate:
+    > - `kubectl delete pod pillow --grace-period 0`
+    > - `kubectl apply -f sysdig-assignment/pillow.yaml`
+    > - Allow sufficient time for the Runtime Scan to run.
 
 0. Setup the filter for our **pillow** pod/container.
 
